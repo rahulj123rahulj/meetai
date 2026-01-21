@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { OctagonAlertIcon } from "lucide-react";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -39,11 +40,30 @@ export const SignInView = () => {
         setIsPending(true)
         authClient.signIn.email({
             email: data.email,
-            password: data.password
-        },{
+            password: data.password,
+            callbackURL: "/"
+        },
+        {
             onSuccess: () => {
-                router.push("/")
+                setIsPending(false)
+                router.push("/sign-in")
             },
+            onError: ({error}) => {
+
+                setError(error?.message ?? "")
+                console.log(error)
+            },
+            onResponse() {
+                setIsPending(false)
+            },
+        })
+    }
+
+    const onSocial = (provider: "google" | "github") =>{
+        authClient.signIn.social({
+            provider: provider,
+            callbackURL: "/"
+        },{
             onError: ({error}) => {
 
                 setError(error?.message ?? "")
@@ -132,7 +152,10 @@ export const SignInView = () => {
                                         disabled={isPending}
                                         type="button"
                                         variant="outline"
-                                        className="w-full">
+                                        className="w-full"
+                                        onClick={()=>{onSocial("google")}}  
+                                        >
+                                        <FaGoogle/>
                                         Google
                                     </Button>
                                     <Button
@@ -140,7 +163,9 @@ export const SignInView = () => {
                                         type="button"
                                         variant={"outline"}
                                         className="w-full"
+                                        onClick={()=>{onSocial("github")}}  
                                         >
+                                        <FaGithub/>
                                         Github
                                     </Button>
                                 </div>
