@@ -33,7 +33,7 @@ const AgentForm = ({onSuccess, onCancel, initialValues}: AgentFormProps)=>{
         onSuccess: ()=>{
             form.reset()
             queryClient.invalidateQueries(
-                trpc.agents.getMany.queryOptions()
+                trpc.agents.getMany.queryOptions({})
             );
             if(initialValues?.id){
                 queryClient.invalidateQueries(

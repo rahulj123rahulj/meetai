@@ -11,7 +11,7 @@ import { ErrorBoundary } from "react-error-boundary"
  
 const Page = async () => {
     const queryClient = getQueryClient();
-    await queryClient.prefetchQuery(trpc.agents.getMany.queryOptions());
+    await queryClient.prefetchQuery(trpc.agents.getMany.queryOptions({}));
     const session = await auth.api.getSession({
         headers: await headers()
     })
