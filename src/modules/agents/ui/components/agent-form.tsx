@@ -49,13 +49,33 @@ const AgentForm = ({onSuccess, onCancel, initialValues}: AgentFormProps)=>{
             console.log(error)
         }
     }))
+    const updateAgent = useMutation(trpc.agents.update.mutationOptions({
+        onSuccess: ()=>{
+            form.reset()
+            queryClient.invalidateQueries(
+                trpc.agents.getMany.queryOptions({})
+            );
+            if(initialValues?.id){
+                queryClient.invalidateQueries(
+                    trpc.agents.getOne.queryOptions({
+                        id: initialValues.id
+                    })
+                )
+            }
+            onSuccess?.()
+        },
+        onError: (error)=>{
+            toast.error(error.message)
+            console.log(error)
+        }
+    }))
 
     const isEdit = !!initialValues
-    const isPending = !!createAgent.isPending
+    const isPending = !!createAgent.isPending || !!updateAgent.isPending
 
     const onSubmit = (values: z.infer<typeof AgentFormSchema>)=>{
         if(isEdit){
-            console.log("Save existing Agent")
+            updateAgent.mutate({...values, id: initialValues?.id})
         }else{
             createAgent.mutate(values)
         }

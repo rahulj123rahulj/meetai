@@ -1,5 +1,5 @@
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Dialog, DialogHeader, DialogContent, DialogDescription } from "./ui/dialog";
+import { Dialog, DialogHeader, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "./ui/drawer";
 
 
@@ -30,7 +30,7 @@ export const ResponsiveDialog = ({ title, description, children, open, onOpenCha
     return <><Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
             <DialogHeader>
-                <DialogHeader>{title}</DialogHeader>
+                <DialogTitle>{title}</DialogTitle>
                 <DialogDescription>{description}</DialogDescription>
             </DialogHeader>
             {children}
