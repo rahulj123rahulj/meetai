@@ -12,10 +12,13 @@ export const AgentIdFilter = () => {
     const [filters, setFilters] = useMeetingsFilters();
     const trpc = useTRPC();
     const [ agentSearch, setAgentSearch] = useState("");
-    const { data } = useQuery(trpc.agents.getMany.queryOptions({
-        pageSize: 100,
-        search: agentSearch
+    const { data, error } = useQuery(trpc.agents.getMany.queryOptions({
+        pageSize: 10,
+        search: agentSearch,
+        page: 1
     }));
+
+    console.log(error)
 
     return <CommandSelect 
     className="h-9 "
