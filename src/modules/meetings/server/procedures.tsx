@@ -6,6 +6,7 @@ import z from 'zod';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, MIN_PAGE_SIZE } from '@/constants';
 import { TRPCError } from '@trpc/server';
 import { MeetingInsertSchema, MeetingUpdateSchema } from '../schema';
+import { MeetingStatus } from '../types';
 export const meetingsRouter = createTRPCRouter({
     create : protectedProcedure
         .input(MeetingInsertSchema)
@@ -65,10 +66,12 @@ export const meetingsRouter = createTRPCRouter({
                 .min(MIN_PAGE_SIZE)
                 .max(MAX_PAGE_SIZE)
                 .default(DEFAULT_PAGE_SIZE),
-            search: z.string().nullable().optional()
+            search: z.string().nullable().optional(),
+            agentId: z.string().nullable().optional(),
+            status : z.enum(MeetingStatus).nullable().optional()
         })
     ).query(async ({input, ctx}) => {
-        const {search, page, pageSize} = input
+        const {search, page, pageSize, status, agentId} = input
         const data = await db
                             .select({
                                 ...getTableColumns(meetings),
@@ -80,7 +83,9 @@ export const meetingsRouter = createTRPCRouter({
                             .where(
                                 and(
                                     eq(meetings.userId, ctx.auth.user.id),
-                                    search ? ilike(meetings.name, `%${search}%`) : undefined
+                                    search ? ilike(meetings.name, `%${search}%`) : undefined,
+                                    agentId ? eq(meetings.agentId, agentId) : undefined,
+                                    status ? eq(meetings.status, status) : undefined
                                 )
                             )
                             .orderBy(desc(meetings.createdAt),desc(meetings.id))
@@ -94,7 +99,9 @@ export const meetingsRouter = createTRPCRouter({
                             .where(
                                 and(
                                     eq(meetings.userId, ctx.auth.user.id),
-                                    search ? ilike(meetings.name, `%${search}%`) : undefined
+                                    search ? ilike(meetings.name, `%${search}%`) : undefined,
+                                    agentId ? eq(meetings.agentId, agentId) : undefined,
+                                    status ? eq(meetings.status, status) : undefined
                                 )
                             );
         const totalPages = Math.ceil(total.count / pageSize);
