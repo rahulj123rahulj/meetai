@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { agents, meetings } from "@/db/schema";
 import { inngest } from "@/inngest/client";
 import { streamClient } from "@/lib/stream-video";
-import { CallEndedEvent, CallRecordingReadyEvent, CallSessionParticipantJoinedEvent, CallSessionParticipantLeftEvent, CallSessionStartedEvent, CallTranscriptionReadyEvent } from "@stream-io/node-sdk";
+import { CallEndedEvent, CallRecordingReadyEvent, CallSessionParticipantLeftEvent, CallSessionStartedEvent, CallTranscriptionReadyEvent } from "@stream-io/node-sdk";
 import { and, eq, not } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -37,9 +37,9 @@ export async function POST(req: NextRequest) {
         );
     }
     const eventType = (payload as Record<string, unknown>)?.type;
-    if(eventType === "call.session_participant_joined") {
-        const event = payload as CallSessionParticipantJoinedEvent;
-        const meetingId = event.call_cid.split(":")[1];
+    if(eventType === "call.session_started") {
+        const event = payload as CallSessionStartedEvent;
+        const meetingId = event.call.custom?.meetingId;
         if(!meetingId) {
             return NextResponse.json(
                 { error: 'Missing meeting id' },
@@ -86,12 +86,6 @@ export async function POST(req: NextRequest) {
             agentUserId: existingAgent.id,
         })
 
-        realtimeClient.on('realtime.event', ({ event }) => {
-            console.log(`got an event from OpenAI ${event.type}`);
-            if (event.type === 'response.audio_transcript.done') {
-                console.log(`got a transcript from OpenAI ${event.transcript}`);
-            }
-        });
 
         realtimeClient.updateSession({
             instructions: existingAgent.instructions,
