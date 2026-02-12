@@ -19,7 +19,7 @@ const SingleMeetingViewHeader = ( { meetingId, meetingName, onEdit, onRemove} : 
             <BreadcrumbItem>
                 <BreadcrumbLink asChild className="font-medium text-xl">
                     <Link href={"/meetings"}>
-                        My Agents
+                        My Meetings
                     </Link>
                 </BreadcrumbLink>
             </BreadcrumbItem>
@@ -28,7 +28,7 @@ const SingleMeetingViewHeader = ( { meetingId, meetingName, onEdit, onRemove} : 
             </BreadcrumbSeparator>
             <BreadcrumbItem>
                 <BreadcrumbLink asChild className="font-medium text-xl text-foreground">
-                    <Link href={`/agents/${meetingId}`}>
+                    <Link href={`/meetings/${meetingId}`}>
                         {meetingName}
                     </Link>
                 </BreadcrumbLink>
