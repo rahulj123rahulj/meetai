@@ -91,21 +91,11 @@ export async function POST(req: NextRequest) {
 
         try {
             const call  = streamClient.video.call("default", meetingId);
-
-            console.log("Connecting OpenAI agent...");
-
             const realtimeClient = await streamClient.video.connectOpenAi({
                 call,
                 openAiApiKey: process.env.OPENAI_API_KEY!,
                 agentUserId: existingAgent.id,
             });
-
-            realtimeClient.on("response", (r) => {
-                console.log("AI response event:", r);
-            });
-
-
-            console.log("OpenAI connected:", !!realtimeClient);
 
             await realtimeClient.updateSession({
                 instructions: existingAgent.instructions,
@@ -120,7 +110,6 @@ export async function POST(req: NextRequest) {
 
             });
 
-            console.log("Instructions applied");
         } catch (err) {
             console.error("OpenAI connect failed:", err);
         }
