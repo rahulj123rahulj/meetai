@@ -13,7 +13,13 @@ interface Props {
     userImage: string
 }
 
-export const CallConnect = ({ meetingId, meetingName, userId, userName, userImage }: Props) => {
+export const CallConnect = ({ 
+    meetingId, 
+    meetingName, 
+    userId, 
+    userName, 
+    userImage 
+}: Props) => {
     const trpc = useTRPC();
     const { mutateAsync: generateToken } = useMutation(trpc.meetings.generateToken.mutationOptions())
 

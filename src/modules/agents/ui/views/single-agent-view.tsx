@@ -29,6 +29,9 @@ const SingleAgentView = ({agentId}:Props) =>{
     const removeAgent = useMutation(trpc.agents.remove.mutationOptions({
         onSuccess: async ()=>{
             await queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}));
+            await queryClient.invalidateQueries(
+                trpc.premium.getFreeUsage.queryOptions()
+            );
             router.push("/agents")
         },
         onError : (error)=>{

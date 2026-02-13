@@ -13,6 +13,7 @@ import { useState } from "react";
 import { CommandSelect } from "@/components/command-select";
 import { GeneratedAvatar } from "@/components/generated-avatar";
 import NewAgentDialog from "@/modules/agents/ui/components/new-agent-dialog";
+import { useRouter } from "next/navigation";
 
 interface MeetingFormProps {
     onSuccess?: (id?: string) => void
@@ -23,6 +24,7 @@ interface MeetingFormProps {
 
 const MeetingForm = ({onSuccess, onCancel, initialValues}: MeetingFormProps)=>{
     const trpc = useTRPC();
+    const router = useRouter();
     const queryClient = useQueryClient();
     const [agentSearch, setAgentSearch] = useState("");
     const [openAgentDialog, setOpenNewAgentDialog] = useState(false);
@@ -41,10 +43,13 @@ const MeetingForm = ({onSuccess, onCancel, initialValues}: MeetingFormProps)=>{
         }
     })
     const createMeeting = useMutation(trpc.meetings.create.mutationOptions({
-        onSuccess: (data)=>{
+        onSuccess:async (data)=>{
             form.reset()
-            queryClient.invalidateQueries(
+            await queryClient.invalidateQueries(
                 trpc.meetings.getMany.queryOptions({})
+            );
+            await queryClient.invalidateQueries(
+                trpc.premium.getFreeUsage.queryOptions()
             );
             if(data?.id){
                 queryClient.invalidateQueries(
@@ -57,13 +62,17 @@ const MeetingForm = ({onSuccess, onCancel, initialValues}: MeetingFormProps)=>{
         },
         onError: (error)=>{
             toast.error(error.message)
+
+            if(error.data?.code === "FORBIDDEN"){
+                router.push("/upgrade")
+            }
             console.log(error)
         }
     }))
     const updateMeeting = useMutation(trpc.meetings.update.mutationOptions({
-        onSuccess: ()=>{
+        onSuccess: async ()=>{
             form.reset()
-            queryClient.invalidateQueries(
+            await queryClient.invalidateQueries(
                 trpc.meetings.getMany.queryOptions({})
             );
             if(initialValues?.id){
