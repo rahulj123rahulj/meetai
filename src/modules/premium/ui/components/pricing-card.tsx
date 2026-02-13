@@ -74,7 +74,7 @@ export const PricingCard = ({
 }: Props) => {
     return (
         <div className={cn(pricingCardVariants({ variant }), className, "border")} >
-            <div className="flex items-end gap-x-4 justify-center">
+            <div className="flex items-end gap-x-4 justify-between">
                 <div className="flex flex-col gap-y-2">
                     <div className="flex items-center gap-x-2">
                         <h6 className="font-medium text-xl">{title}</h6>
