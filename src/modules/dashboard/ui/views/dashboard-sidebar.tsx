@@ -37,7 +37,7 @@ const DashboardSidebar = () => {
             <SidebarHeader className="text-sidebar-accent-foreground px-4 py-2">
                 <Link href={"/"} className="flex items-center gap-2">
                     <Image src="/logo.svg" alt="logo" width={36} height={36} />
-                    <p className="text-2xl font-semibold">Visor.AI</p>
+                    <p className="text-2xl font-semibold">Meet.AI</p>
                 </Link>
             </SidebarHeader>
 
